@@ -42,4 +42,4 @@ async function fetchQueueCount() {
 fetchQueueCount();
 
 // Auto-refresh every 5 seconds
-setInterval(fetchQueueCount, 5000);
+setInterval(fetchQueueCount, 10000);
