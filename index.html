@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Polina's Queue Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Display font for DMV-style digital look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="display-board">
+    <div class="header-banner">
+      <h1>NOW SERVING / QUEUE STATUS</h1>
+    </div>
+    
+    <div class="screen">
+      <div class="label">PEOPLE AHEAD OF POLINA</div>
+      <div id="counter" class="number-display">--</div>
+      <div id="status-message" class="subtext">SYNCING WITH BOARD...</div>
+    </div>
+
+    <div class="footer-banner">
+      <span class="dot pulse"></span> LIVE SYSTEM UPDATE
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
