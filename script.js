@@ -54,14 +54,12 @@ function triggerCelebration() {
 
 async function fetchQueueCount() {
   try {
-    const cacheBuster = Date.now();
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(RAW_GIST_URL)}&timestamp=${cacheBuster}`;
-
-    const response = await fetch(proxyUrl);
+    // Direct raw fetch with cache buster query string
+    const response = await fetch(`${RAW_GIST_URL}?t=${Date.now()}`);
     if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
 
-    const data = await response.json();
-    const currentTicket = parseInt(data.contents.trim(), 10);
+    const text = await response.text();
+    const currentTicket = parseInt(text.trim(), 10);
 
     if (isNaN(currentTicket)) {
       counterElement.textContent = "ERR";
@@ -74,12 +72,11 @@ async function fetchQueueCount() {
     if (peopleAhead > 0) {
       counterElement.textContent = peopleAhead;
       statusElement.textContent = `NOW SERVING: #${currentTicket} | POLINA: #${POLINA_TICKET}`;
-      hasCelebrated = false; // Reset if ticket rolls back
+      hasCelebrated = false;
     } else if (peopleAhead === 0) {
       counterElement.textContent = "0";
       statusElement.textContent = `NOW SERVING #${POLINA_TICKET} - POLINA IS UP!`;
       
-      // Trigger confetti and horn only once when reaching 0
       if (!hasCelebrated) {
         triggerCelebration();
         hasCelebrated = true;
