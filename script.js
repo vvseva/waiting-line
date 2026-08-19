@@ -1,37 +1,42 @@
-// Replace with your raw Gist URL or Gist ID
-const GIST_ID = "0d2c6341f8d776db8c364d12b46fc0ae";
-const GIST_URL = `https://api.github.com/gists/${GIST_ID}`;
+// Your exact Raw Gist URL
+const RAW_GIST_URL = "https://gist.githubusercontent.com/vvseva/0d2c6341f8d776db8c364d12b46fc0ae/raw";
+
+// Polina's fixed ticket number
+const POLINA_TICKET = 156;
 
 const counterElement = document.getElementById("counter");
 const statusElement = document.getElementById("status-message");
 
 async function fetchQueueCount() {
   try {
-    // Cache-busting parameter to ensure fresh data on every request
-    const response = await fetch(`${GIST_URL}?nocache=${new Date().getTime()}`);
-    if (!response.ok) throw new Error("Network error");
+    // Fetching via a proxy with timestamp parameter forces fresh data instantly without GitHub rate limits
+    const cacheBuster = Date.now();
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(RAW_GIST_URL)}&timestamp=${cacheBuster}`;
+
+    const response = await fetch(proxyUrl);
+    if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
 
     const data = await response.json();
-    
-    // Reads the first file inside your Gist
-    const firstFileName = Object.keys(data.files)[0];
-    const content = data.files[firstFileName].content.trim();
-    const count = parseInt(content, 10);
-    // const count = 25;
+    const currentTicket = parseInt(data.contents.trim(), 10);
 
-    if (isNaN(count)) {
+    if (isNaN(currentTicket)) {
       counterElement.textContent = "ERR";
-      statusElement.textContent = "INVALID DATA IN GIST";
+      statusElement.textContent = "INVALID TICKET NUMBER IN GIST";
+      return;
+    }
+
+    // Calculate how many people are ahead of Polina
+    const peopleAhead = POLINA_TICKET - currentTicket;
+
+    if (peopleAhead > 0) {
+      counterElement.textContent = peopleAhead;
+      statusElement.textContent = `NOW SERVING: #${currentTicket} | POLINA: #${POLINA_TICKET}`;
+    } else if (peopleAhead === 0) {
+      counterElement.textContent = "0";
+      statusElement.textContent = `NOW SERVING #${POLINA_TICKET} - POLINA IS UP!`;
     } else {
-      counterElement.textContent = count;
-      
-      if (count === 0) {
-        statusElement.textContent = "POLINA IS NEXT UP!";
-      } else if (count < 0) {
-        statusElement.textContent = "PASSED / SERVED";
-      } else {
-        statusElement.textContent = "UPDATED REAL-TIME";
-      }
+      counterElement.textContent = "0";
+      statusElement.textContent = `SERVED (PASSED BY ${Math.abs(peopleAhead)})`;
     }
   } catch (error) {
     console.error("Fetch error:", error);
@@ -42,5 +47,5 @@ async function fetchQueueCount() {
 // Initial fetch on page load
 fetchQueueCount();
 
-// Auto-refresh every 5 seconds
-setInterval(fetchQueueCount, 10000);
+// Refresh every 5 seconds
+setInterval(fetchQueueCount, 5000);
