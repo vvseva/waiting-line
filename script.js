@@ -16,7 +16,8 @@ async function fetchQueueCount() {
     // Reads the first file inside your Gist
     const firstFileName = Object.keys(data.files)[0];
     const content = data.files[firstFileName].content.trim();
-    const count = parseInt(content, 10);
+    // const count = parseInt(content, 10);
+    const count = 25;
 
     if (isNaN(count)) {
       counterElement.textContent = "ERR";
